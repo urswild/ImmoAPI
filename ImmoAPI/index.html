@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Immo App</title>
+</head>
+<body>
+    <div>
+        <h2>Alle Gebäude</h2>
+        <ul id="buildings" />
+    </div>
+
+    <div>
+        <h2>Suche mit ID</h2>
+        <input type="text" id="buildId" size="5" />
+        <input type="button" value="Suche" onclick="find();" />
+        <p id="building" />
+    </div>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+
+    <script>
+        var uri = 'api/buildings';
+
+        $(document).ready(function () {
+            // Send an AJAX request
+            $.getJSON(uri).done(function (data) {
+                // On success, 'data' contains a list of buildings
+                $.each(data, function (key, item) {
+                    // Add a list item for the building
+                    $('<li>', { text: formatItem(item) }).appendTo($('#buildings'));
+                });
+            });
+        });
+
+        function formatItem(item) {
+            return item.Name + ': CHF ' + item.Price;
+        }
+
+        function find() {
+            var id = $('#buildId').val();
+            $.getJSON(uri + '/' + id).done(function (data) {
+                $('#building').text(formatItem(data));
+            })
+            .fail(function (jqXHR, textStatus, err) {
+                $('#building').text('Error: ' + err);
+            });
+        }
+
+    </script>
+
+</body>
+</html>
